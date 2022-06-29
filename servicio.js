@@ -19,18 +19,37 @@ conn.connect(function (err){
 app.post("/servicio/create",function (request,response){
 
 });
-app.get('/cuenta/get/:id',function (request,response){
+app.get('/cuenta/get/:id?',function (request,response){
     let idCuenta = request.params.id;
-    if(idCuenta===""){
+    if(!idCuenta){
         let q = "select * from cuenta";
+        conn.query(q,function (err,results){
+            if(err){
+                console.log("Sucede algo malo")
+                response.json({err: "No se puede ejecutar el query"});
+                throw err;
+            }else{
+                response.json(results);
+            }
+        });
     }else{
         let q = "select * from cuenta where idcuenta = ?";
         let q_param = [idCuenta];
+        conn.query(q,q_param,function (err,results){
+            if (err){
+                response.json({err: "No se puede ejecutar el query"});
+                throw err;
+            }else{
+                if(results.length == 0){
+                    response.json({err: "No existe la cuenta"});
+                }else{
+                    response.json(results);
+                }
+            }
+        });
     }
-
-
-
 });
+
 app.listen(3000,()=>{
     console.log("Servidor Levantandose");
 });
