@@ -18,31 +18,48 @@ conn.connect(function (err){
 });
 
 
-app.get('/mascota/get/:id',(req,res)=>{
+app.get('/mascota/get/:id?',(req,res)=>{
     let idMascota = req.params.id;
-    console.log(idMascota)
-    let sql = "SELECT * FROM mascota WHERE idmascota = ?";
 
-    let params = [idMascota];
+    if(!idMascota){
+        let sentencia = "SELECT * FROM mascota";
+        conn.query(sentencia,function (err,results){
+           if(err){
+               res.json({err: "ocurrió un error"});
+               throw err;
+           }else{
+               for(let i=0;i<results.length;i++){
+                   if(results[i].raza_otros == null){
+                       results[i].raza_otros = "Sin especificar";
+                   }
+               }
+               res.json(results);
+           }
+        });
+    }else{
+        let sql = "SELECT * FROM mascota WHERE idmascota = ?";
 
-    conn.query(sql,params,function (err,results){
-        if (err){
-            res.json({err: "ocurrió un error"});
-            throw err;
-        }else{
-            if(results.length == 0){
-                res.json({err: "No existe la mascota"});
+        let params = [idMascota];
+
+        conn.query(sql,params,function (err,results){
+            if (err){
+                res.json({err: "ocurrió un error"});
+                throw err;
             }else{
-                for(let i=0;i < results.length;i++){
-                    if(results[i].raza_otros == null){
-                        results[i].raza_otros = "Sin especificar";
+                if(results.length == 0){
+                    res.json({err: "No existe la mascota"});
+                }else{
+                    for(let i=0;i < results.length;i++){
+                        if(results[i].raza_otros == null){
+                            results[i].raza_otros = "Sin especificar";
+                        }
                     }
+                    res.json(results);
                 }
-                res.json(results);
             }
-        }
 
-    });
+        });
+    }
 
 });
 
