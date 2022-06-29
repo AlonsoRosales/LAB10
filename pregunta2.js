@@ -24,7 +24,7 @@ app.post('/mascota/create',bodyParse.urlencoded({extended :true}), bodyParse.jso
     let nombre = req.body.nombre;
     let anho = req.body.anho;
     let historia = req.body.historia;
-    let observaciones = req.body.observacionesl;
+    let observaciones = req.body.observaciones;
     let sexo = req.body.sexo;
     let raza_especie_idraza = req.body.raza_especie_idraza;
     let raza_otros = req.body.raza_otros;
@@ -33,7 +33,8 @@ app.post('/mascota/create',bodyParse.urlencoded({extended :true}), bodyParse.jso
     let params = [nombre,anho,historia,observaciones,sexo,raza_especie_idraza,raza_otros,cuenta_idcuenta]
     let sql = "INSERT INTO `sandylance`.`mascota` (`nombre`, `anho`, `historia`, `observaciones`, `sexo`, `raza_especie_idraza`, `raza_otros`,`cuenta_idcuenta`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     conn.query(sql,params,function (err,result){
-
+        if (err) throw err;
+        res.json(result);
     })
 })
 
